@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tharani P · AI & Robotics Portfolio</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* === style.css === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 30% 10%, #e6f0ff, #ffffff 40%, #dff6ff 90%);
+            min-height: 100vh;
+            color: #1a1f2b;
+            line-height: 1.5;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* floating particles canvas (AI animation) */
+        #ai-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 5;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        /* ===== glassmorphism base ===== */
+        .glass-card, .navbar, .skill-card, .project-card, .contact-form, .soft-card, .timeline-item {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 32px;
+            box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+        }
+
+        /* neumorphism / soft buttons */
+        .neo-btn {
+            background: #f0f5fd;
+            border: none;
+            border-radius: 60px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            color: #1f3a5f;
+            box-shadow: 8px 8px 16px #b5c9e6, -8px -8px 16px #ffffff;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .neo-btn:hover {
+            box-shadow: 4px 4px 8px #b5c9e6, -4px -4px 8px #ffffff;
+            transform: scale(0.98);
+        }
+
+        /* ===== navbar ===== */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2.5rem;
+            margin-top: 1rem;
+            border-radius: 80px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 0 12px 30px -5px rgba(79, 146, 255, 0.2);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b2b4f;
+        }
+        .logo i {
+            font-size: 2.2rem;
+            color: #3f7ec5;
+            filter: drop-shadow(0 0 8px #b5d8ff);
+        }
+        .nav-links a {
+            margin-left: 2rem;
+            text-decoration: none;
+            color: #0b2b4f;
+            font-weight: 500;
+            position: relative;
+        }
+        .nav-links a:after {
+            content: '';
+            display: block;
+            height: 2px;
+            background: #3f7ec5;
+            width: 0%;
+            transition: 0.3s;
+        }
+        .nav-links a:hover:after { width: 100%; }
+
+        /* ===== hero ===== */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 4rem 0 6rem;
+            position: relative;
+        }
+        .hero-text {
+            flex: 1;
+        }
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #022b49, #2f5a9c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero-avatar {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        .moon-robot {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at 35% 35%, #fff9e6, #d9eaff);
+            border-radius: 50%;
+            box-shadow: 0 0 60px #b3daff, 0 0 120px #c9e7ff inset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: floatMoon 6s infinite alternate ease-in-out;
+        }
+        .moon-robot i {
+            font-size: 8rem;
+            color: #2b4f7b;
+            text-shadow: 0 0 20px white;
+            filter: drop-shadow(0 0 15px #aaccff);
+        }
+        .moon-robot::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.2"><path d="M20,20 Q40,5 60,20 Q80,35 70,60 Q55,80 30,70 Q10,55 20,20" fill="none" stroke="%23ffffff" stroke-width="0.5"/><circle cx="40" cy="40" r="2" fill="white"/><circle cx="70" cy="30" r="2" fill="white"/></svg>');
+            background-size: cover;
+            pointer-events: none;
+        }
+        @keyframes floatMoon {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        /* floating robotic icons */
+        .floating-icon {
+            position: absolute;
+            font-size: 2rem;
+            color: #4b7db3;
+            animation: glowMove 8s infinite;
+            filter: drop-shadow(0 0 8px white);
+        }
+        .icon1 { top:10%; left:5%; animation-delay:0s; }
+        .icon2 { bottom:15%; right:8%; animation-delay:2s; }
+        .icon3 { top:30%; right:20%; animation-delay:4s; }
+        @keyframes glowMove {
+            0% { transform: translate(0,0) scale(1); opacity:0.7; }
+            50% { transform: translate(10px, -15px) scale(1.2); opacity:1; }
+            100% { transform: translate(0,0) scale(1); opacity:0.7; }
+        }
+
+        /* section titles */
+        .section-title {
+            font-size: 2.8rem;
+            margin: 3rem 0 2rem;
+            background: linear-gradient(145deg, #103a5e, #567daf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            border-bottom: 4px solid rgba(255,255,255,0.7);
+            padding-bottom: 0.5rem;
+        }
+
+        /* about */
+        .about-glass {
+            padding: 2.5rem;
+            border-radius: 48px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(8px);
+            font-size: 1.3rem;
+            border: 1px solid white;
+        }
+
+        /* education timeline */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .timeline-item {
+            padding: 1.8rem 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            transition: 0.3s;
+            border-left: 8px solid #aac9ff;
+        }
+        .timeline-item:hover {
+            transform: translateX(12px);
+            background: rgba(255,255,255,0.4);
+            border-color: white;
+        }
+        .timeline-icon i { font-size: 2.5rem; color: #0d3d64; }
+
+        /* skills bars */
+        .skill-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .skill-item p { margin-bottom: 0.5rem; font-weight: 600; }
+        .bar-bg {
+            height: 24px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid white;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #8ec5fc, #e0f0ff);
+            border-radius: 40px;
+            box-shadow: 0 0 12px #b0d6ff;
+            transition: width 1.2s ease;
+        }
+
+        /* soft cards */
+        .soft-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .soft-card {
+            padding: 2rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.25);
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .soft-card:hover {
+            transform: scale(1.05) translateY(-8px);
+            box-shadow: 0 30px 40px -15px #a0b5d9;
+            border-color: #c9e7ff;
+        }
+        .soft-card i { font-size: 2.8rem; color: #1f4970; margin-bottom: 1rem; }
+
+        /* projects */
+        .project-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            max-width: 800px;
+        }
+        .project-card {
+            padding: 2rem;
+            border-radius: 40px;
+            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .project-card:hover {
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 30px #dbeafe, 0 0 0 2px #ffffff;
+            transform: translateY(-10px);
+        }
+        .project-card h3 { font-size: 1.8rem; }
+        .project-card i { font-size: 2.5rem; color: #20568a; margin-bottom: 0.5rem; }
+
+        /* contact form & glass */
+        .contact-section {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+        .contact-info, .contact-form {
+            flex: 1 1 280px;
+            padding: 2.5rem;
+            border-radius: 48px;
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: none;
+            border-radius: 40px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(4px);
+            font-size: 1rem;
+        }
+        .contact-form button { width: 100%; }
+
+        /* footer */
+        .footer {
+            margin: 4rem 0 2rem;
+            padding: 2rem;
+            border-radius: 60px;
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(6px);
+            font-weight: 300;
+        }
+
+        /* scroll reveal base */
+        .fade-slide {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+        .fade-slide.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* responsive */
+        @media (max-width: 800px) {
+            .hero { flex-direction: column; text-align: center; }
+            .navbar { flex-direction: column; gap: 1rem; }
+            .nav-links a { margin: 0 1rem; }
+            .project-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- AI particles canvas (simple floating dots) -->
+    <canvas id="ai-particles"></canvas>
+
+    <div class="wrapper">
+        <!-- Navbar -->
+        <nav class="navbar fade-slide">
+            <div class="logo">
+                <i class="fas fa-robot"></i> 
+                <span>Tharani P <span style="font-weight:300; font-size:1rem;">⚡ AI & Robotics</span></span>
+            </div>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#education">Education</a>
+                <a href="#skills">Skills</a>
+                <a href="#projects">Projects</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </nav>
+
+        <!-- Hero -->
+        <section class="hero fade-slide">
+            <div class="hero-text">
+                <h1>Tharani P</h1>
+                <p style="font-size:1.8rem; font-weight:300; color:#153e60;">ECE · AI · Robotics</p>
+                <p style="margin:2rem 0; max-width:500px;">Building intelligent systems with a futuristic moonlit mindset.</p>
+                <button class="neo-btn"><i class="fas fa-rocket"></i> Explore portfolio</button>
+                <!-- floating icons -->
+                <div class="floating-icon icon1"><i class="fas fa-microchip"></i></div>
+                <div class="floating-icon icon2"><i class="fas fa-satellite"></i></div>
+                <div class="floating-icon icon3"><i class="fas fa-brain"></i></div>
+            </div>
+            <div class="hero-avatar">
+                <div class="moon-robot">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- About -->
+        <section id="about">
+            <h2 class="section-title fade-slide">✦ about me</h2>
+            <div class="about-glass fade-slide">
+                <i class="fas fa-quote-left" style="color:#557daa; font-size:2rem; opacity:0.6;"></i>
+                <p>I am an ECE student skilled in AI and programming languages. I am passionate about building intelligent systems and aim to secure a position in a reputed company.</p>
+                <div style="display:flex; gap:2rem; margin-top:1.5rem; flex-wrap:wrap;">
+                    <span><i class="fas fa-envelope"></i> tharaniprakash67@gmail.com</span>
+                    <span><i class="fas fa-phone-alt"></i> +91 xxxxxx 813</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education timeline (updated) -->
+        <section id="education">
+            <h2 class="section-title fade-slide">◈ education</h2>
+            <div class="timeline">
+                <div class="timeline-item fade-slide">
+                    <div class="timeline-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div><strong>B.E Electronics and Communication Engineering</strong> (2022–2026) <br> with specialization in AI & Robotics</div>
+                </div>
+                <div class="timeline-item fade-slide">
+                    <div class="timeline-icon"><i class="fas fa-school"></i></div>
+                    <div><strong>Higher secondary education</strong> — 81% <br> science stream with computer science</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical skills + animated bars -->
+        <section id="skills">
+            <h2 class="section-title fade-slide">⌨ technical skills</h2>
+            <div class="skill-bars">
+                <div class="skill-item fade-slide">
+                    <p><i class="fas fa-code"></i> C language</p>
+                    <div class="bar-bg"><div class="bar-fill" data-width="85"></div></div>
+                </div>
+                <div class="skill-item fade-slide">
+                    <p><i class="fas fa-code"></i> C++</p>
+                    <div class="bar-bg"><div class="bar-fill" data-width="80"></div></div>
+                </div>
+                <div class="skill-item fade-slide">
+                    <p><i class="fab fa-java"></i> Java</p>
+                    <div class="bar-bg"><div class="bar-fill" data-width="75"></div></div>
+                </div>
+                <!-- extra AI themed skill -->
+                <div class="skill-item fade-slide">
+                    <p><i class="fas fa-robot"></i> AI / prompt basics</p>
+                    <div class="bar-bg"><div class="bar-fill" data-width="70"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Soft skills cards -->
+        <h2 class="section-title fade-slide">⚡ soft skills</h2>
+        <div class="soft-grid">
+            <div class="soft-card fade-slide"><i class="fas fa-comments"></i><h3>Communication</h3></div>
+            <div class="soft-card fade-slide"><i class="fas fa-people-group"></i><h3>Team worker</h3></div>
+            <div class="soft-card fade-slide"><i class="fas fa-brain"></i><h3>Quick learner</h3></div>
+            <div class="soft-card fade-slide"><i class="fas fa-globe"></i><h3>Adaptability</h3></div>
+        </div>
+
+        <!-- Project showcase (only one project as requested) -->
+        <section id="projects">
+            <h2 class="section-title fade-slide">🛰️ projects</h2>
+            <div class="project-grid">
+                <div class="project-card fade-slide">
+                    <i class="fas fa-microchip"></i>
+                    <h3>Processor Stress Aware Telemetry Optimization</h3>
+                    <p>A project focused on optimizing telemetry systems by monitoring processor stress for improved system performance and efficiency.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact + form (placeholder removed) -->
+        <section id="contact">
+            <h2 class="section-title fade-slide">✧ contact</h2>
+            <div class="contact-section">
+                <div class="contact-info fade-slide">
+                    <p><i class="fas fa-envelope"></i> tharaniprakash67@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +91 xxxxxxxx13</p>
+                    <p><i class="fab fa-linkedin"></i> Tharani P</p>
+                    <p><i class="fab fa-github"></i> THARANIPRAKASH-680</p>
+                    <div style="margin-top:2rem; font-style:italic;">“Connect under the moon glow”</div>
+                </div>
+                <div class="contact-form fade-slide">
+                    <form id="demoForm" onsubmit="event.preventDefault(); alert('✨ message sent (demo)');">
+                        <input type="text" placeholder="your name" />
+                        <input type="email" placeholder="email@address" />
+                        <textarea rows="3" placeholder="your message"></textarea>
+                        <button type="submit" class="neo-btn">Send signal 🚀</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer with acknowledgement -->
+        <footer class="footer fade-slide">
+            <p>The given above details are from my knowledge.</p>
+            <p style="margin-top:1rem;">🌕 Tharani P · 2025 · AI & Robotics portfolio · glassmorphism moon</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript (script.js) -->
+    <script>
+        (function() {
+            // === AI particles ===
+            const canvas = document.getElementById('ai-particles');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+
+            function initParticles() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                
+                const pCount = 60;
+                particles = [];
+                for (let i = 0; i < pCount; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        r: Math.random() * 2 + 1.5,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.15,
+                        alpha: Math.random() * 0.5 + 0.3,
+                    });
+                }
+            }
+
+            function drawParticles() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, width, height);
+                ctx.fillStyle = '#b5d8ff';
+                for (let p of particles) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.globalAlpha = p.alpha * 0.9;
+                    ctx.fillStyle = '#aac9ff';
+                    ctx.fill();
+                    // glow effect
+                    ctx.shadowColor = '#ffffff';
+                    ctx.shadowBlur = 12;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    
+                    // move
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
+                }
+                requestAnimationFrame(drawParticles);
+            }
+
+            window.addEventListener('resize', () => {
+                initParticles();
+            });
+            initParticles();
+            drawParticles();
+
+            // === scroll reveal + skill bars animation ===
+            const faders = document.querySelectorAll('.fade-slide');
+            const skillBars = document.querySelectorAll('.bar-fill');
+
+            function checkFade() {
+                const trigger = window.innerHeight * 0.85;
+                faders.forEach(el => {
+                    const top = el.getBoundingClientRect().top;
+                    if (top < trigger) {
+                        el.classList.add('revealed');
+                    }
+                });
+
+                // fill skill bars if visible (once)
+                skillBars.forEach(bar => {
+                    if (!bar.dataset.animated && bar.closest('.skill-item')?.classList.contains('revealed')) {
+                        const width = bar.dataset.width || '70';
+                        bar.style.width = width + '%';
+                        bar.dataset.animated = 'true';
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', checkFade);
+            window.addEventListener('load', () => {
+                checkFade();
+                setTimeout(checkFade, 500);
+            });
+
+            // second pass for bars
+            window.addEventListener('load', function() {
+                let bars = document.querySelectorAll('.bar-fill');
+                bars.forEach(b => {
+                    if (b.getBoundingClientRect().top < window.innerHeight-50 && !b.dataset.animated) {
+                        b.style.width = b.dataset.width + '%';
+                        b.dataset.animated = 'true';
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
